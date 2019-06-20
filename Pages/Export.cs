@@ -14,7 +14,6 @@ namespace SpotifyClone.Pages
         public Export(Program program)
             : base("Export", program)
         {
-            //Playlists = new Paging<SimplePlaylist>();
             Profile = Runner.Spotify.GetPrivateProfile();
             GetPlaylists();
         }
@@ -38,7 +37,7 @@ namespace SpotifyClone.Pages
 
             Output.WriteLine(ConsoleColor.Red, "Export started");
             ExportPlaylist(Choice - 1);
-            Output.WriteLine(ConsoleColor.Green, "Export complete");
+            Output.WriteLine(ConsoleColor.Green, $"Export complete, saved in {System.IO.Directory.GetCurrentDirectory()}");
 
             Input.ReadString("Press [Enter] to navigate home");
             Program.NavigateHome();
@@ -59,16 +58,20 @@ namespace SpotifyClone.Pages
             }
 
             // Export CSV TrackId,Artist,TrackName,AddedAt
-
             StringBuilder Sb = new StringBuilder();
+
+            if (Runner.Header)
+            {
+                Sb.AppendLine("Number;Id;Artists;Name;AddedAt");
+            }
 
             for (int i = 0; i < PlaylistTracks.Items.Count; i++)
             {
                 FullTrack Track = PlaylistTracks.Items[i].Track;
-                Sb.AppendLine($"{(i + 1).ToString("000")};{Track.Id};{Track.Artists[0].Name};{Track.Name};{PlaylistTracks.Items[i].AddedAt}");
+                Sb.AppendLine($"{(i + 1).ToString("000")};{Track.Id};\"{Track.Artists[0].Name}\";\"{Track.Name}\";{PlaylistTracks.Items[i].AddedAt}");
             }
 
-            System.IO.File.WriteAllText("Ciccio.txt", Sb.ToString());
+            System.IO.File.WriteAllText($"{string.Join("", Playlists.Items[Index].Name.Split(System.IO.Path.GetInvalidFileNameChars()))}.csv", Sb.ToString());
         }
     }
 }
