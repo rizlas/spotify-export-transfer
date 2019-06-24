@@ -37,7 +37,7 @@ namespace SpotifyClone
 
             _Auth.ClientId = _ClientId;
             _Auth.RedirectUri = _RedirectUri;
-            _Auth.Scope = Scope.PlaylistReadCollaborative | Scope.PlaylistModifyPrivate;
+            _Auth.Scope = Scope.PlaylistReadPrivate | Scope.PlaylistModifyPrivate;
 
             _Auth.OnResponseReceivedEvent += Auth_OnResponseReceivedEvent;
             _Auth.StartHttpServer(_RedirectPort); // Starts an internal HTTP Server

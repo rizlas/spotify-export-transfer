@@ -1,5 +1,4 @@
 ﻿using EasyConsoleCore;
-using Spotify.API.NetCore.Enums;
 using Spotify.API.NetCore.Models;
 using SpotifyClone.Model;
 using System;
@@ -28,7 +27,7 @@ namespace SpotifyClone.Pages
 
             if (Confirm.Trim() == "n")
             {
-                Console.WriteLine($"Before continue clean your cookie and browser session, otherwise the same account will be used..{Environment.NewLine}Hit [Enter] to continue...");
+                Output.WriteLine(ConsoleColor.Red, $"Before continue clean your cookie and browser session, otherwise the same account will be used..{Environment.NewLine}Hit [Enter] to continue...");
                 Console.ReadLine();
 
                 Console.WriteLine("Authentication...");
@@ -64,17 +63,40 @@ namespace SpotifyClone.Pages
                     NewName = Console.ReadLine();
                 }
 
+                Console.Write($"Would you like to keep the add order of the oldest playlist? [Y (slower) / n (faster)]");
+                Confirm = Console.ReadLine();
+                bool Order = true;
+
+                if (Confirm.Trim() == "n")
+                {
+                    Order = false;
+                }
+
                 FullPlaylist NewPlaylist = Auth.Spotify.CreatePlaylist(Auth.Profile.Id, NewName == string.Empty ? PlaylistName : NewName, false);
+                Console.WriteLine("Import started");
+                Console.WriteLine();
+
+                string Format = "0000";
+
+                if (Tracks.Count < 1000)
+                    Format = "000";
+                else if (Tracks.Count < 100)
+                    Format = "00";
 
                 foreach (var Track in Tracks)
                 {
-                    Console.WriteLine($"{Track.Index}/{Tracks.Count}");
+                    Console.Write($"\rProcessing: {Track.Index.ToString(Format)}/{Tracks.Count.ToString(Format)}");
                     Auth.Spotify.AddPlaylistTrack(Auth.Profile.Id, NewPlaylist.Id, $"spotify:track:{Track.Id}", Track.Index - 1);
-                    Thread.Sleep(1000);
+
+                    if (Order)
+                    {
+                        Thread.Sleep(1000);
+                    }
                 }
             }
 
-            Output.WriteLine(ConsoleColor.Red, "Import Finished");
+            Console.WriteLine();
+            Output.WriteLine(ConsoleColor.Green, "Import Finished");
             Input.ReadString("Press [Enter] to navigate home");
             Program.NavigateHome();
         }

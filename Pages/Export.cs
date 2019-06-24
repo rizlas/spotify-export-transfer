@@ -23,21 +23,35 @@ namespace SpotifyClone.Pages
         public override void Display()
         {
             Console.WriteLine($"Main Page > Export{Environment.NewLine}---");
+            
+            if(Playlists.Items.Count == 0)
+            {
+                Output.WriteLine(ConsoleColor.Red, "0 playlists found!");
+            }
+
+            Console.WriteLine("0. Go back");
 
             for (int i = 0; i < Playlists.Items.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {Playlists.Items[i].Name} Owner: {Playlists.Items[i].Owner.DisplayName}");
             }
 
-            int Choice = Input.ReadInt("Choose an option: ", min: 1, max: Playlists.Items.Count);
-            Output.WriteLine(ConsoleColor.Green, "You selected {0}", Playlists.Items[Choice - 1].Name);
+            int Choice = Input.ReadInt("Choose an option: ", min: 0, max: Playlists.Items.Count);
 
-            Output.WriteLine(ConsoleColor.Red, "Export started");
-            ExportPlaylist(Choice - 1);
-            Output.WriteLine(ConsoleColor.Green, $"Export complete, saved in {System.IO.Directory.GetCurrentDirectory()}");
+            if (Choice != 0)
+            {
+                Output.WriteLine(ConsoleColor.Green, "You selected {0}", Playlists.Items[Choice - 1].Name);
+                Output.WriteLine(ConsoleColor.Red, "Export started");
 
-            Input.ReadString("Press [Enter] to navigate home");
-            Program.NavigateHome();
+                ExportPlaylist(Choice - 1);
+                Output.WriteLine(ConsoleColor.Green, $"Export complete, saved in {System.IO.Directory.GetCurrentDirectory()}");
+                Input.ReadString("Press [Enter] to navigate home");
+                Program.NavigateBack();
+            }
+            else
+            {
+                Program.NavigateBack();
+            }
         }
 
         private void ExportPlaylist(int Index)
