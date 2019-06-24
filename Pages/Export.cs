@@ -9,18 +9,15 @@ namespace SpotifyClone.Pages
     class Export : MenuPage
     {
         Paging<SimplePlaylist> Playlists;
-        PrivateProfile Profile;
 
-        public Export(Program program)
-            : base("Export", program)
+        public Export(Program program) : base("Export", program)
         {
-            Profile = Runner.Spotify.GetPrivateProfile();
             GetPlaylists();
         }
 
         private void GetPlaylists()
         {
-            Playlists = Runner.Spotify.GetUserPlaylists(Profile.Id);
+            Playlists = Auth.Spotify.GetUserPlaylists(Auth.Profile.Id);
         }
 
         public override void Display()
@@ -46,24 +43,20 @@ namespace SpotifyClone.Pages
         private void ExportPlaylist(int Index)
         {
             int Offset = 0;
-            Paging<PlaylistTrack> PlaylistTracks = Runner.Spotify.GetPlaylistTracks(Profile.Id, Playlists.Items[Index].Id, offset: Offset);
+            Paging<PlaylistTrack> PlaylistTracks = Auth.Spotify.GetPlaylistTracks(Auth.Profile.Id, Playlists.Items[Index].Id, offset: Offset);
             int Total = PlaylistTracks.Total;
             Offset += PlaylistTracks.Items.Count;
 
             while (Offset < Total)
             {
-                Paging<PlaylistTrack> TmpTracks = Runner.Spotify.GetPlaylistTracks(Profile.Id, Playlists.Items[Index].Id, offset: Offset);
+                Paging<PlaylistTrack> TmpTracks = Auth.Spotify.GetPlaylistTracks(Auth.Profile.Id, Playlists.Items[Index].Id, offset: Offset);
                 PlaylistTracks.Items.AddRange(TmpTracks.Items);
                 Offset += TmpTracks.Items.Count;
             }
 
             // Export CSV TrackId,Artist,TrackName,AddedAt
             StringBuilder Sb = new StringBuilder();
-
-            if (Runner.Header)
-            {
-                Sb.AppendLine("Number;Id;Artists;Name;AddedAt");
-            }
+            Sb.AppendLine("Number;Id;Artists;Name;AddedAt");
 
             for (int i = 0; i < PlaylistTracks.Items.Count; i++)
             {

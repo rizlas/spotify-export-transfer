@@ -12,7 +12,7 @@ namespace SpotifyClone
         {
             AddPage(new Main(this));
             AddPage(new Export(this));
-            AddPage(new Clone(this));
+            AddPage(new Import(this));
 
             SetPage<Main>();
         }
