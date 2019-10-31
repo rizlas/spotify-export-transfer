@@ -19,7 +19,7 @@ For the APIs wrapper:
 https://github.com/JohnnyCrazy/SpotifyAPI-NET <br/>
 https://github.com/peacecwz/spotify-api-netcore/
 
-For console menù:
+For console menu:
 
 https://github.com/splttingatms/EasyConsole <br/>
 https://github.com/JamieMair/EasyConsoleCore
